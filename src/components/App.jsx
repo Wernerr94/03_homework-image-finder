@@ -67,7 +67,7 @@ class App extends Component {
   };
 
   render() {
-    const { images, showLoader, showModal } = this.state;
+    const { images, showLoader, showModal, pickedImage } = this.state;
     return (
       <div>
         <Searchbar onSubmit={this.handleSubmit} />
@@ -79,7 +79,7 @@ class App extends Component {
 
         {showModal && (
           <Modal onClose={this.toggleModal}>
-            <img src={this.state.pickedImage.largeImageURL} />
+            <img src={pickedImage.largeImageURL} alt={pickedImage.tags} />
           </Modal>
         )}
       </div>
