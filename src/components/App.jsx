@@ -19,21 +19,12 @@ class App extends Component {
   };
 
   componentDidUpdate(_, prevState) {
-    if (this.state.value !== prevState.value) {
+    if (
+      this.state.value !== prevState.value ||
+      this.state.pages !== prevState.pages
+    ) {
       this.setState({ showLoader: true });
       setTimeout(() => {
-        imageAPI
-          .getImages(this.state.value)
-          .then(res => this.setState({ images: res, pages: 2 }))
-          .finally(() => this.setState({ showLoader: false }));
-      }, 500);
-    }
-  }
-  handleNewLoad = () => {
-    this.setState({ showLoader: true });
-    this.handleClickAmount();
-    setTimeout(
-      () =>
         imageAPI
           .getImages(this.state.value, this.state.pages)
           .then(res =>
@@ -43,11 +34,11 @@ class App extends Component {
               };
             })
           )
-          .finally(() => this.setState({ showLoader: false })),
-      500
-    );
-  };
-  handleClickAmount = () => {
+          .finally(() => this.setState({ showLoader: false }));
+      }, 500);
+    }
+  }
+  handleLoader = () => {
     this.setState(prevState => {
       return {
         pages: prevState.pages + 1,
@@ -73,7 +64,7 @@ class App extends Component {
         <Searchbar onSubmit={this.handleSubmit} />
         <ImageGallery images={images} modalOpener={this.toggleModal} />
         {(images.length > 0) & !showLoader && (
-          <Button onLoad={this.handleNewLoad} />
+          <Button onLoad={this.handleLoader} />
         )}
         {showLoader && <Loader color="#457b9d" height={300} width={300} />}
 
