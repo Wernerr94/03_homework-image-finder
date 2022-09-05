@@ -6,12 +6,13 @@ import Loader from './Loader';
 import Button from './Button';
 import Modal from './Modal';
 import './App.css';
-import imageAPI from '../services/pixabay-api';
+import imageAPI from '../components/services/pixabay-api';
 
 class App extends Component {
   state = {
     value: '',
     images: [],
+    totalImages: 0,
     pickedImage: null,
     pages: 1,
     showLoader: false,
@@ -20,8 +21,8 @@ class App extends Component {
 
   componentDidUpdate(_, prevState) {
     if (
-      this.state.value !== prevState.value ||
-      this.state.pages !== prevState.pages
+      this.state.pages !== prevState.pages ||
+      this.state.value !== prevState.value
     ) {
       this.setState({ showLoader: true });
       setTimeout(() => {
@@ -30,15 +31,16 @@ class App extends Component {
           .then(res =>
             this.setState(prevState => {
               return {
-                images: prevState.images.concat(res),
+                images: prevState.images.concat(res.hits),
+                totalImages: res.total,
               };
             })
           )
           .finally(() => this.setState({ showLoader: false }));
-      }, 500);
+      }, 200);
     }
   }
-  handleLoader = () => {
+  handleLoadMore = () => {
     this.setState(prevState => {
       return {
         pages: prevState.pages + 1,
@@ -55,16 +57,18 @@ class App extends Component {
   };
   handleSubmit = value => {
     this.setState({ value });
+    this.setState({ pages: 1 });
   };
-
   render() {
-    const { images, showLoader, showModal, pickedImage } = this.state;
+    const { images, showLoader, showModal, pickedImage, totalImages } =
+      this.state;
+
     return (
       <div>
         <Searchbar onSubmit={this.handleSubmit} />
         <ImageGallery images={images} modalOpener={this.toggleModal} />
-        {(images.length > 0) & !showLoader && (
-          <Button onLoad={this.handleLoader} />
+        {images.length !== totalImages && !showLoader && (
+          <Button onLoad={this.handleLoadMore} />
         )}
         {showLoader && <Loader color="#457b9d" height={300} width={300} />}
 
