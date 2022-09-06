@@ -25,19 +25,18 @@ class App extends Component {
       this.state.value !== prevState.value
     ) {
       this.setState({ showLoader: true });
-      setTimeout(() => {
-        imageAPI
-          .getImages(this.state.value, this.state.pages)
-          .then(res =>
-            this.setState(prevState => {
-              return {
-                images: prevState.images.concat(res.hits),
-                totalImages: res.total,
-              };
-            })
-          )
-          .finally(() => this.setState({ showLoader: false }));
-      }, 200);
+
+      imageAPI
+        .getImages(this.state.value, this.state.pages)
+        .then(res =>
+          this.setState(prevState => {
+            return {
+              images: prevState.images.concat(res.hits),
+              totalImages: res.total,
+            };
+          })
+        )
+        .finally(() => this.setState({ showLoader: false }));
     }
   }
   handleLoadMore = () => {
@@ -58,6 +57,7 @@ class App extends Component {
   handleSubmit = value => {
     this.setState({ value });
     this.setState({ pages: 1 });
+    this.setState({ images: [] });
   };
   render() {
     const { images, showLoader, showModal, pickedImage, totalImages } =
